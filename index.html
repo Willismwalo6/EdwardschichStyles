@@ -226,7 +226,7 @@ function renderGrid(){
       <div class="art-wrap">
         <span class="thrift-badge">Thrifted · Quality checked</span>
         <span class="fit-tag" id="fittag-${p.id}">${s.fit === 'baggy' ? 'Ask for baggy fit' : 'Fitted shown'}</span>
-        <img id="img-${p.id}" src="${IMAGES[opt.img]}" alt="${p.name}">
+        <img id="img-${p.id}" src="${IMAGES[opt.img]}" alt="${p.name}" loading="lazy" decoding="async">
       </div>
       <div class="cbody">
         <div class="name">${p.name}</div>
