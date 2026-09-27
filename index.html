@@ -55,7 +55,14 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;pa
 .grid{display:grid;gap:clamp(18px,2.5vw,26px);grid-template-columns:repeat(auto-fill,minmax(250px,1fr));padding:14px clamp(16px,4vw,48px) 40px;}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;}
 .art-wrap{aspect-ratio:4/5;position:relative;overflow:hidden;background:var(--cream-deep);}
-.art-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.art-wrap img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in;}
+
+.lightbox{position:fixed;inset:0;background:rgba(15,12,8,.92);z-index:60;display:none;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top,0px)) 16px calc(20px + env(safe-area-inset-bottom,0px));}
+.lightbox.open{display:flex;}
+.lightbox-inner{max-width:min(560px,92vw);width:100%;display:flex;flex-direction:column;gap:10px;}
+.lightbox-inner img{width:100%;max-height:72vh;object-fit:contain;border-radius:8px;background:var(--cream-deep);}
+.lightbox-caption{color:var(--cream);display:flex;align-items:center;justify-content:space-between;gap:10px;font:600 .9rem 'Inter',sans-serif;}
+.lightbox-close{background:none;border:1px solid var(--cream);color:var(--cream);border-radius:100px;width:34px;height:34px;font-size:1.1rem;cursor:pointer;flex-shrink:0;}
 .thrift-badge{position:absolute;top:10px;left:10px;background:var(--card);border:1px solid var(--line);padding:3px 9px;border-radius:100px;font-size:.65rem;font-weight:700;letter-spacing:.02em;z-index:2;}
 .fit-tag{position:absolute;bottom:10px;left:10px;background:rgba(33,28,21,.78);color:#fff;padding:4px 10px;border-radius:100px;font-size:.65rem;font-weight:600;z-index:2;}
 .cbody{padding:15px 15px 17px;display:flex;flex-direction:column;gap:9px;flex:1;}
@@ -234,6 +241,16 @@ footer{padding:28px clamp(16px,4vw,48px) 40px;border-top:1px solid var(--line);f
 
 <div class="call-banner">
   <span class="dot"></span> Reach the owner directly — <a href="tel:+254726438887">Call now: 0726 438 887</a>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption">
+      <span id="lightboxName"></span>
+      <button class="lightbox-close" id="lightboxClose">×</button>
+    </div>
+  </div>
 </div>
 
 <div class="drawer-overlay" id="overlay"></div>
@@ -5156,6 +5173,11 @@ function renderGrid(){
       });
     }
 
+    card.querySelector(`#img-${p.id}`).addEventListener('click', ()=>{
+      const liveImg = card.querySelector(`#img-${p.id}`);
+      openLightbox(liveImg.src, p.name);
+    });
+
     card.querySelector(`#fit-${p.id}`).addEventListener('click', e=>{
       const btn = e.target.closest('button');
       if(!btn) return;
@@ -5198,6 +5220,19 @@ function closeDrawer(){ document.getElementById('overlay').classList.remove('ope
 document.getElementById('cartBtn').onclick = openDrawer;
 document.getElementById('closeDrawer').onclick = closeDrawer;
 document.getElementById('overlay').onclick = closeDrawer;
+
+function openLightbox(src, name){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxImg').alt = name;
+  document.getElementById('lightboxName').textContent = name;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightboxClose').onclick = closeLightbox;
+document.getElementById('lightbox').addEventListener('click', e=>{
+  if(e.target.id === 'lightbox') closeLightbox();
+});
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeLightbox(); });
 
 document.getElementById('checkoutBtn').onclick = ()=>{
   if(cart.length===0){ alert('Your bag is empty — add a piece first.'); return; }
